@@ -1,0 +1,8 @@
+---
+
+version: '3.4'
+
+services:
+  ups-metrics_runner:
+    image: docker-registry.localnet:5000/ups-metrics_runner
+    build: ./ups-metrics_runner
