@@ -1,5 +1,6 @@
 FROM alpine:edge
 
-RUN apk add --no-cache net-snmp-tools coreutils curl
-COPY init.sh .
-ENTRYPOINT [ "/bin/sh", "init.sh" ]
+RUN apk add --no-cache py3-pip python3-dev gcc musl-dev net-snmp-dev
+RUN pip3 install easysnmp
+COPY snmp.py .
+ENTRYPOINT [ "/usr/bin/python3", "snmp.py" ]
