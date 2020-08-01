@@ -7,6 +7,7 @@ services:
     image: docker-registry.localnet:5000/ups-metrics_runner
     build: ./ups-metrics_runner
     environment:
-     - SNMP_ADDRESS="10.0.1.213"
+     - SNMP_ADDRESS=10.0.1.213
      - ELASTIC_URL=http://elasticsearch.localnet:9200
      - ELASTIC_INDEX=power
+     - DEBUG=True

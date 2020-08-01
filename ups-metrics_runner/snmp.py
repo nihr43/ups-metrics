@@ -2,7 +2,8 @@ import os
 
 from easysnmp import Session
 
-session = Session(hostname='10.0.1.213', community='public', version=1)
+session = Session(hostname=os.environ.get('SNMP_ADDRESS'), community='public',
+                  version=1)
 
 load = session.get('.1.3.6.1.2.1.33.1.4.4.1.5.1')
 ac_voltage = session.get('.1.3.6.1.2.1.33.1.3.3.1.3.1')
