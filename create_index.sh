@@ -2,7 +2,7 @@
 #
 ## drops and creates "power" index with mappings.  elasticsearch 6.x
 
-ELASTIC_URL="http://elasticsearch.localnet:9200"
+ELASTIC_URL="https://elasticsearch.local:9200"
 
 set -e
 
