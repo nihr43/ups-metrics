@@ -6,8 +6,8 @@ ELASTIC_URL="https://elasticsearch.local:9200"
 
 set -e
 
-curl -X DELETE "${ELASTIC_URL}/power?pretty"
-curl -X PUT "${ELASTIC_URL}/power?pretty" \
+curl -k -u elastic -X DELETE "${ELASTIC_URL}/power?pretty"
+curl -k -u elastic -X PUT "${ELASTIC_URL}/power?pretty" \
      -H 'Content-Type: application/json' \
      -d '
 {
@@ -18,17 +18,15 @@ curl -X PUT "${ELASTIC_URL}/power?pretty" \
     }
   },
   "mappings": {
-    "_doc": {
-      "properties": {
-        "@timestamp": {
-          "type": "date"
-        },
-        "temp": {
-          "type": "integer"
-        },
-        "watts": {
-          "type": "integer"
-        }
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "temp": {
+        "type": "integer"
+      },
+      "watts": {
+        "type": "integer"
       }
     }
   }
