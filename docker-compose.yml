@@ -3,11 +3,11 @@
 version: '3.4'
 
 services:
-  ups-metrics_runner:
-    image: docker-registry.localnet:5000/ups-metrics_runner
+  ups-metrics:
+    image: images.local:5000/ups-metrics
     build: .
     environment:
      - SNMP_ADDRESS=10.0.0.143
-     - ELASTIC_URL=https://elasticsearch.local:9200
-     - ELASTIC_INDEX=power
      - DEBUG=True
+    ports:
+     - 8080:8080
