@@ -7,7 +7,7 @@ services:
     image: images.local:5000/ups-metrics
     build: .
     environment:
-     - SNMP_ADDRESS=10.0.0.143
+     - SNMP_ADDRESS=192.168.1.106
      - DEBUG=True
     ports:
      - 8080:8080
