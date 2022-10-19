@@ -4,7 +4,7 @@ import (
 	"math/big"
 )
 
-type ups struct {
+type Ups struct {
 	Model      string
 	Load       *big.Int
 	Temp       *big.Int

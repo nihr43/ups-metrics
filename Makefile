@@ -4,14 +4,13 @@ docker: main
 	docker-compose build && docker-compose up
 
 go.mod:
-	go mod init ups-metrics
+	go mod init github.com/nihr43/ups-metrics
 
 go.sum: go.mod
 	go mod tidy
 
 gofmt:
 	gofmt main.go | sponge main.go
-	gofmt models.go | sponge models.go
 
 main: go.sum gofmt
-	CGO_ENABLED=0 go build
+	GO111MODULE=off CGO_ENABLED=0 go build main.go

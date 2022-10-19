@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	g "github.com/gosnmp/gosnmp"
 
-	"github.com/nihr43/ups-metrics/models"
+	"./models"
 )
 
 func snmp_get(address string, oid string) g.SnmpPDU {
@@ -57,7 +57,7 @@ func UpsHandler(snmp_address string) http.HandlerFunc {
 		log.Println("UpsHandler")
 
 		// TODO: figure out more elegant way to handle two possible return types
-		this_ups := &ups{Model: string(snmp_get(snmp_address, "1.3.6.1.2.1.33.1.1.2.0").Value.([]byte)),
+		this_ups := &models.Ups{Model: string(snmp_get(snmp_address, "1.3.6.1.2.1.33.1.1.2.0").Value.([]byte)),
 			Load:       g.ToBigInt(snmp_get(snmp_address, "1.3.6.1.2.1.33.1.4.4.1.5.1").Value),
 			Temp:       g.ToBigInt(snmp_get(snmp_address, "1.3.6.1.2.1.33.1.2.7.0").Value),
 			Ac_voltage: g.ToBigInt(snmp_get(snmp_address, "1.3.6.1.2.1.33.1.3.3.1.3.1").Value)}

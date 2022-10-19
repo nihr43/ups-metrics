@@ -1,5 +1,5 @@
 FROM alpine:edge
 
-COPY ups-metrics /bin/ups-metrics
+COPY main /bin/ups-metrics
 RUN chmod +x /bin/ups-metrics
 CMD [ "/bin/ups-metrics" ]
