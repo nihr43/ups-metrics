@@ -4,21 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/big"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gorilla/mux"
 	g "github.com/gosnmp/gosnmp"
-)
 
-type ups struct {
-	Model      string
-	Load       *big.Int
-	Temp       *big.Int
-	Ac_voltage *big.Int
-}
+	"github.com/nihr43/ups-metrics/models"
+)
 
 func snmp_get(address string, oid string) g.SnmpPDU {
 	g.Default.Target = address

@@ -11,6 +11,7 @@ go.sum: go.mod
 
 gofmt:
 	gofmt main.go | sponge main.go
+	gofmt models.go | sponge models.go
 
 main: go.sum gofmt
-	CGO_ENABLED=0 go build main.go
+	CGO_ENABLED=0 go build
