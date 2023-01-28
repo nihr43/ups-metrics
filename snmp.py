@@ -1,5 +1,3 @@
-import os
-
 from easysnmp import Session
 from flask import Flask
 from flask_restful import Resource, Api
@@ -28,18 +26,32 @@ class Tripplite_Smart:
 
 
 class battery(Resource):
+    def __init__(self, **kwargs):
+        self.os = kwargs['os']
+
     def get(self):
-        ups = Tripplite_Smart(os.getenv('SNMP_ADDRESS'))
+        ups = Tripplite_Smart(self.os.getenv('SNMP_ADDRESS'))
         return(ups.__dict__)
 
 
-def main():
+def flask(os):
     app = Flask(__name__)
     api = Api(app)
 
-    api.add_resource(battery, '/power/')
+    api.add_resource(battery, '/power/', resource_class_kwargs={'os': os})
     app.run(host='0.0.0.0', port='5000')
 
 
 if __name__ == '__main__':
+    def main():
+        import os
+        import argparse
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--flask', action='store_true')
+        args = parser.parse_args()
+
+        if args.flask:
+            flask(os)
+
     main()
