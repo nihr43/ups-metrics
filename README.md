@@ -11,7 +11,16 @@ Specifically, I use this with a 'SMART500RT1u'.
 at a minimum, an SNMP address is needed:
 
 ```
-SNMP_ADDRESS=10.1.2.3 python3 snmp.py
+SNMP_ADDRESS=172.16.116.98 python3 snmp.py | jq
+{
+  "ip": "172.16.116.98",
+  "load": 138,
+  "uptime_days": 26,
+  "ac_voltage": 119,
+  "battery_temp": 27,
+  "mac": "\u0000@",
+  "model": "SMART500RT1U"
+}
 ```
 
 the same json can be served on a flask server:
