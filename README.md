@@ -1,10 +1,92 @@
 # ups-metrics
 
-Endpoint for collecting metrics on Tripplite SMART series ups devices.
+Collect metrics on Tripplite SMART series UPS devices and push to InfluxDB, serve on http, or print to console.
 
-This primarily exists so that I dont have to deal with SNMP or this thing's poor web ui anymore; checking wattage is now just a quick glance at some json.
+I do not know if the embedded resource ids (OIDs? MIBs?) are consistent across devices of the same model, series, specific to Tripplite, etc.
+Specifically, I use this with a 'SMART500RT1u'.
 
-I do not know if the embedded resource ids (OIDs? MIBs?) are consistent across devices.
+
+## usage
+
+at a minimum, an SNMP address is needed:
+
+```
+SNMP_ADDRESS=10.1.2.3 python3 snmp.py
+```
+
+the same json can be served on a flask server:
+
+```
+SNMP_ADDRESS=10.1.2.3 python3 snmp.py --flask
+```
+
+or we can push time-series metrics to InfluxDB:
+
+```
+export SNMP_ADDRESS=10.1.2.3
+export INFLUX_BUCKET=power
+export INFLUX_ORG=defaultorg
+export INFLUX_TOKEN=asdfasdf
+export INFLUX_URL=http://10.4.5.6:8086
+python3 snmp.py --influx
+```
+
+though ideally we set-and-forget in kubernetes:
+*(terraform manifest shown)*
+
+```
+resource "kubernetes_deployment" "ups-metrics" {
+  metadata {
+    name = "ups-metrics"
+  }
+  spec {
+    replicas = 1
+    selector {
+      match_labels = {
+        app = "ups-metrics"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          app = "ups-metrics"
+        }
+      }
+      spec {
+        container {
+          image = "images.local:5000/ups-metrics"
+          name  = "ups-metrics"
+          env {
+            name = "SNMP_ADDRESS"
+            value = "172.16.116.98"
+          }
+          env {
+            name = "INFLUX_BUCKET"
+            value = "power"
+          }
+          env {
+            name = "INFLUX_ORG"
+            value = "defaultorg"
+          }
+          env {
+            name = "INFLUX_URL"
+            value = "http://influxdb:8086"
+          }
+          env {
+            name = "INFLUX_TOKEN"
+            value_from {
+              secret_key_ref {
+                name = "influx-senders"
+                key = "token"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ## misc
 
@@ -26,37 +108,4 @@ Required OS packages for building python packages:
 libsnmp-dev
 ```
 
-## usage
-
-`make` knows how to quickly setup the go module, build the project, and run it in docker:
-
-```
-$ make
-go mod init ups-metrics
-go: creating new go.mod: module ups-metrics
-go: to add module requirements and sums:
-	go mod tidy
-go mod tidy
-go: finding module for package github.com/gorilla/mux
-go: found github.com/gorilla/mux in github.com/gorilla/mux v1.8.0
-gofmt main.go | sponge main.go
-CGO_ENABLED=0 go build main.go
-docker-compose build && docker-compose up
-Building ups-metrics
-Sending build context to Docker daemon  7.066MB
-Step 1/4 : FROM alpine:edge
- ---> 49b6d04814d5
-Step 2/4 : COPY main /bin/ups-metrics
- ---> Using cache
- ---> 36f12d294b08
-Step 3/4 : RUN chmod +x /bin/ups-metrics
- ---> Using cache
- ---> 008eb8db5abd
-Step 4/4 : CMD [ "/bin/ups-metrics" ]
- ---> Using cache
- ---> 78cfd77c81e6
-Successfully built 78cfd77c81e6
-Successfully tagged images.local:5000/ups-metrics:latest
-Starting ups-metrics_ups-metrics_1 ... done
-Attaching to ups-metrics_ups-metrics_1
-```
+you may have noticed, an old golang version of this is laying around as well.
