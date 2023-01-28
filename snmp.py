@@ -55,7 +55,7 @@ def flask(os):
     app.run(host='0.0.0.0', port='5000')
 
 
-def influx_reporter(os):
+def influx_reporter(os, update_interval):
     '''
     report metrics to influxdb
     '''
@@ -73,7 +73,7 @@ def influx_reporter(os):
     ups_ip = os.getenv('SNMP_ADDRESS')
 
     while True:
-        sleep(random.randrange(1, 60))
+        sleep(random.randrange(1, update_interval))
         ups = Tripplite_Smart(ups_ip)
 
         load = influxdb_client.Point("power").tag("mac", ups.mac).field("load", ups.load)
@@ -93,12 +93,13 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument('--flask', action='store_true')
         parser.add_argument('--influx', action='store_true')
+        parser.add_argument('--interval', type=int, default=120)
         args = parser.parse_args()
 
         if args.flask:
             flask(os)
         elif args.influx:
-            influx_reporter(os)
+            influx_reporter(os, args.interval)
         else:
             ups = Tripplite_Smart(os.getenv('SNMP_ADDRESS'))
             print(json.dumps(ups.__dict__))
