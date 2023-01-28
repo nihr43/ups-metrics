@@ -1,10 +1,10 @@
-from python:3-slim
+from python:3-alpine
 
-copy snmp.py .
 copy requirements.txt .
 
-run apt update &&\
-    apt install -y libsnmp-dev gcc &&\
+run apk add net-snmp-dev gcc musl-dev &&\
     pip install -r requirements.txt
+
+copy snmp.py .
 
 cmd [ "python3", "snmp.py", "--influx" ]
