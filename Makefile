@@ -1,8 +1,11 @@
 .PHONY: docker gofmt
 
-image:
+image: lint
 	docker build . --tag=images.local:5000/ups-metrics
 	docker push images.local:5000/ups-metrics
+
+lint:
+	flake8 --ignore E501 *.py
 
 docker: main
 	docker-compose build && docker-compose up
