@@ -1,3 +1,4 @@
+influxdb-client
 flask
 flask-restful
 easysnmp

@@ -1,6 +1,12 @@
+import json
 from easysnmp import Session
 from flask import Flask
 from flask_restful import Resource, Api
+import random
+from time import sleep
+
+import influxdb_client
+from influxdb_client.client.write_api import SYNCHRONOUS
 
 
 class Tripplite_Smart:
@@ -42,6 +48,36 @@ def flask(os):
     app.run(host='0.0.0.0', port='5000')
 
 
+def influx_reporter(os):
+    '''
+    report metrics to influxdb
+    '''
+    bucket = os.getenv('INFLUX_BUCKET')
+    org = os.getenv('INFLUX_ORG')
+    token = os.getenv('INFLUX_TOKEN')
+    url = os.getenv('INFLUX_URL')
+
+    client = influxdb_client.InfluxDBClient(
+        url=url,
+        token=token,
+        org=org)
+
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+    ups_ip = os.getenv('SNMP_ADDRESS')
+
+    while True:
+        sleep(random.randrange(1, 60))
+        ups = Tripplite_Smart(ups_ip)
+
+        load = influxdb_client.Point("power").tag("host", ups.ip).field("load", ups.load)
+        battery_temp = influxdb_client.Point("power").tag("host", ups.ip).field("battery_temp", ups.battery_temp)
+        ac_voltage = influxdb_client.Point("power").tag("host", ups.ip).field("ac_voltage", ups.ac_voltage)
+
+        write_api.write(bucket=bucket, org=org, record=load)
+        write_api.write(bucket=bucket, org=org, record=battery_temp)
+        write_api.write(bucket=bucket, org=org, record=ac_voltage)
+
+
 if __name__ == '__main__':
     def main():
         import os
@@ -49,9 +85,15 @@ if __name__ == '__main__':
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--flask', action='store_true')
+        parser.add_argument('--influx', action='store_true')
         args = parser.parse_args()
 
         if args.flask:
             flask(os)
+        elif args.influx:
+            influx_reporter(os)
+        else:
+            ups = Tripplite_Smart(os.getenv('SNMP_ADDRESS'))
+            print(json.dumps(ups.__dict__))
 
     main()
