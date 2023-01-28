@@ -27,8 +27,15 @@ class Tripplite_Smart:
 
         self.ac_voltage = int(session.get('.1.3.6.1.2.1.33.1.3.3.1.3.1').value)
         self.battery_temp = int(session.get('.1.3.6.1.2.1.33.1.2.7.0').value)
-        self.mac = session.get('.1.3.6.1.2.1.2.2.1.6.2').value
+        mac = str(session.get('.1.3.6.1.2.1.2.2.1.6.2').value)
+        self.mac = toRaw(mac).hex().upper()
         self.model = session.get('.1.3.6.1.2.1.33.1.1.2.0').value
+
+
+def toRaw(s):
+    # https://stackoverflow.com/a/70082688
+    x = [ord(i) for i in list(s)]
+    return bytearray(x)
 
 
 class battery(Resource):
