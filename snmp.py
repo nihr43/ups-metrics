@@ -76,9 +76,9 @@ def influx_reporter(os):
         sleep(random.randrange(1, 60))
         ups = Tripplite_Smart(ups_ip)
 
-        load = influxdb_client.Point("power").tag("host", ups.ip).field("load", ups.load)
-        battery_temp = influxdb_client.Point("power").tag("host", ups.ip).field("battery_temp", ups.battery_temp)
-        ac_voltage = influxdb_client.Point("power").tag("host", ups.ip).field("ac_voltage", ups.ac_voltage)
+        load = influxdb_client.Point("power").tag("mac", ups.mac).field("load", ups.load)
+        battery_temp = influxdb_client.Point("power").tag("mac", ups.mac).field("battery_temp", ups.battery_temp)
+        ac_voltage = influxdb_client.Point("power").tag("mac", ups.mac).field("ac_voltage", ups.ac_voltage)
 
         write_api.write(bucket=bucket, org=org, record=load)
         write_api.write(bucket=bucket, org=org, record=battery_temp)
