@@ -20,10 +20,10 @@ class Tripplite_Smart:
 
         # SMART500RT1U is a 300 watt device, raw value appears to be x/1000
         load_raw = session.get('.1.3.6.1.2.1.33.1.4.4.1.5.1')
-        self.load = int(float(load_raw.value)*0.3)
+        self.load = int(float(load_raw.value) * 0.3)
 
         uptime_raw = session.get('.1.3.6.1.2.1.1.3.0')
-        self.uptime_days = int(float(uptime_raw.value)/8640000)
+        self.uptime_days = int(float(uptime_raw.value) / 8640000)
 
         self.ac_voltage = int(session.get('.1.3.6.1.2.1.33.1.3.3.1.3.1').value)
         self.battery_temp = int(session.get('.1.3.6.1.2.1.33.1.2.7.0').value)
