@@ -44,7 +44,7 @@ class battery(Resource):
 
     def get(self):
         ups = Tripplite_Smart(self.os.getenv('SNMP_ADDRESS'))
-        return(ups.__dict__)
+        return (ups.__dict__)
 
 
 def flask(os):
